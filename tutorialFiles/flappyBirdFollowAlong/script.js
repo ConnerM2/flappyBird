@@ -19,13 +19,16 @@ let pipeWidth = 64;
 let pipeX = boardWidth;
 let pipeY = 0;
 
+let topPipeImg;
+let bottomPipeImg;
+
 // physics
 let velocityX = -2;
 let velocityY = 0;
-let gravity = .4;
+let gravity = 0.4;
 
-gameOver = false;
-score = 0;
+let gameOver = false;
+let score = 0;
 
 // object of bird to easlily acces the data above
 let bird = {
@@ -57,12 +60,40 @@ window.onload = function () {
 
     requestAnimationFrame(update);
     setInterval(placePipes, 1500);
-    document.addEventListener('keydown', moveBird)
 }
 
 // this is the code that refreshes every frame and sets the canvas and movement
+// "main game loop"
 function update () {
+    requestAnimationFrame(update);    
     if (gameOver) {
         return;
     }
+
+    // this clear the current frame so it doesnt just keep stacking
+    context.clearRect (0, 0, board.width, board.height)
+
+    // bird 
+    context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
+
+    //pipes 
+    for (let i = 0; i < pipeArray.length; i++) {
+        let pipe = pipeArray[i]
+        pipe.x += velocityX
+        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height)
+
+    }
+}
+
+function placePipes () {
+    let topPipe = {
+        img : topPipeImg,
+        x : pipeX,
+        y : pipeY,
+        width : pipeWidth,
+        height : pipeHeight,
+        passed : false
+    }
+
+    pipeArray.push(topPipe)
 }
