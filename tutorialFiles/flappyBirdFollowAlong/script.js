@@ -12,6 +12,21 @@ let birdX = boardWidth/8;
 let birdY = boardHeight/2;
 let birdImg;
 
+// pipes
+let pipeArray = [];
+let pipeHeight = 512;
+let pipeWidth = 64;
+let pipeX = boardWidth;
+let pipeY = 0;
+
+// physics
+let velocityX = -2;
+let velocityY = 0;
+let gravity = .4;
+
+gameOver = false;
+score = 0;
+
 // object of bird to easlily acces the data above
 let bird = {
     x : birdX,
@@ -39,4 +54,15 @@ window.onload = function () {
 
     bottomPipeImg = new Image();
     bottomPipeImg.src = "../flappy-bird/bottompipe.png"
+
+    requestAnimationFrame(update);
+    setInterval(placePipes, 1500);
+    document.addEventListener('keydown', moveBird)
+}
+
+// this is the code that refreshes every frame and sets the canvas and movement
+function update () {
+    if (gameOver) {
+        return;
+    }
 }
