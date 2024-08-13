@@ -25,7 +25,7 @@ let bottomPipeImg;
 // physics
 let velocityX = -2;
 let velocityY = 0;
-let gravity = 0.4;
+let gravity = 0.2;
 
 let gameOver = false;
 let score = 0;
@@ -60,6 +60,7 @@ window.onload = function () {
 
     requestAnimationFrame(update);
     setInterval(placePipes, 1500);
+    document.addEventListener("keydown", moveBird)
 }
 
 // this is the code that refreshes every frame and sets the canvas and movement
@@ -74,18 +75,30 @@ function update () {
     context.clearRect (0, 0, board.width, board.height)
 
     // bird 
+    velocityY += gravity;
+    bird.y += Math.max(bird.y + velocityY, 0); //applys gravity to the bird, but also stop the bird from going over the screen
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
 
+    if (bird.y > board.height) {
+        gameOver = true;
+    }
     //pipes 
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i]
         pipe.x += velocityX
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height)
 
+        if (detectCollision(bird, pipe)) {
+            gameOver = true;
+        }
     }
 }
 
 function placePipes () {
+
+    if (gameOver) {
+        return;
+    }
 
     // this sets the pipe at a random position
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
@@ -110,6 +123,25 @@ function placePipes () {
         height: pipeHeight,
         passed : false
     }
-
     pipeArray.push(bottomPipe)
+}
+
+function moveBird(e) {
+    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
+        velocityY = -6
+    }
+
+    if (gameOver) {
+        bird.y = birdY;
+        pipeArray = [];
+        score = 0;
+        gameOver = false;
+    }
+}
+
+function detectCollision(a, b) {
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y; 
 }
